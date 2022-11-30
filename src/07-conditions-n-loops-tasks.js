@@ -418,8 +418,23 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const splitedPathes = pathes.map((path) => path.split(/(?<=\/)/));
+  const firtSplitedPath = splitedPathes
+    .splice(0, 1)[0]
+    .filter((path) => path.match(/^[a-z]+?\/$|\//));
+
+  const commonPath = [];
+
+  for (let i = 0; i < firtSplitedPath.length; i += 1) {
+    if (splitedPathes.every((path) => path[i] === firtSplitedPath[i])) {
+      commonPath.push(firtSplitedPath[i]);
+    } else {
+      break;
+    }
+  }
+
+  return commonPath.join('');
 }
 
 /**
@@ -440,8 +455,20 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const result = [];
+
+  for (let row = 0; row < m1.length; row += 1) {
+    result[row] = [];
+    for (let col = 0; col < m2[0].length; col += 1) {
+      result[row][col] = 0;
+      for (let i = 0; i < m1[0].length; i += 1) {
+        result[row][col] += m1[row][i] * m2[i][col];
+      }
+    }
+  }
+
+  return result;
 }
 
 /**
@@ -474,8 +501,56 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const symbols = ['X', '0'];
+  const fieldSize = 3;
+
+  const checkRows = (symbol, field) => {
+    for (let i = 0; i < fieldSize; i += 1) {
+      let count = 0;
+      for (let j = 0; j < fieldSize; j += 1) {
+        if (field[i][j] === symbol) count += 1;
+      }
+      if (count === fieldSize) return true;
+    }
+    return false;
+  };
+
+  const checkColumns = (symbol, field) => {
+    for (let i = 0; i < fieldSize; i += 1) {
+      let count = 0;
+      for (let j = 0; j < fieldSize; j += 1) {
+        if (field[j][i] === symbol) count += 1;
+      }
+      if (count === fieldSize) return true;
+    }
+    return false;
+  };
+
+  const checkMainDiag = (symbol, field) => {
+    let count = 0;
+    for (let i = 0; i < fieldSize; i += 1) {
+      if (field[i][i] === symbol) count += 1;
+    }
+    return count === fieldSize;
+  };
+
+  const checkSideDiag = (symbol, field) => {
+    let count = 0;
+    for (let i = 0; i < fieldSize; i += 1) {
+      if (field[i][fieldSize - i - 1] === symbol) count += 1;
+    }
+    return count === fieldSize;
+  };
+
+  for (let i = 0; i < symbols.length; i += 1) {
+    if (checkRows(symbols[i], position)) return symbols[i];
+    if (checkColumns(symbols[i], position)) return symbols[i];
+    if (checkMainDiag(symbols[i], position)) return symbols[i];
+    if (checkSideDiag(symbols[i], position)) return symbols[i];
+  }
+
+  return undefined;
 }
 
 module.exports = {
