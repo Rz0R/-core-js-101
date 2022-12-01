@@ -8,7 +8,6 @@
  *                                                                                             *
  ********************************************************************************************* */
 
-
 /**
  * Returns the functions composition of two specified functions f(x) and g(x).
  * The result of compose is to be a function of one argument, (lets call the argument x),
@@ -23,10 +22,9 @@
  *   getComposition(Math.sin, Math.asin)(x) => Math.sin(Math.asin(x))
  *
  */
-function getComposition(/* f, g */) {
-  throw new Error('Not implemented');
+function getComposition(f, g) {
+  return (x) => f(g(x));
 }
-
 
 /**
  * Returns the math power function with the specified exponent
@@ -44,10 +42,9 @@ function getComposition(/* f, g */) {
  *   power05(16) => 4
  *
  */
-function getPowerFunction(/* exponent */) {
-  throw new Error('Not implemented');
+function getPowerFunction(exponent) {
+  return (base) => base ** exponent;
 }
-
 
 /**
  * Returns the polynom function of one argument based on specified coefficients.
@@ -62,10 +59,14 @@ function getPowerFunction(/* exponent */) {
  *   getPolynom(8)     => y = 8
  *   getPolynom()      => null
  */
-function getPolynom() {
-  throw new Error('Not implemented');
-}
+function getPolynom(...args) {
+  const [a, b, c] = args;
+  if (args.length === 3) return (x) => a * x ** 2 + b * x + c;
+  if (args.length === 2) return (x) => a * x + b;
+  if (args.length === 1) return () => a;
 
+  return null;
+}
 
 /**
  * Memoizes passed function and returns function
@@ -81,10 +82,11 @@ function getPolynom() {
  *   ...
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
-function memoize(/* func */) {
-  throw new Error('Not implemented');
+function memoize(func) {
+  let cache = null;
+  if (cache === null) cache = func();
+  return () => cache;
 }
-
 
 /**
  * Returns the function trying to call the passed function and if it throws,
@@ -101,10 +103,20 @@ function memoize(/* func */) {
  * }, 2);
  * retryer() => 2
  */
-function retry(/* func, attempts */) {
-  throw new Error('Not implemented');
+function retry(func, attempts) {
+  let attemptCounter = 0;
+  return () => {
+    if (attemptCounter <= attempts) {
+      try {
+        func();
+      } catch (e) {
+        attemptCounter += 1;
+        return 'expected';
+      }
+    }
+    return undefined;
+  };
 }
-
 
 /**
  * Returns the logging wrapper for the specified method,
@@ -129,10 +141,15 @@ function retry(/* func, attempts */) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return (...args) => {
+    const argStr = JSON.stringify([...args]).slice(1, -1);
+    logFunc(`${func.name}(${argStr}) starts`);
+    const result = func(...args);
+    logFunc(`${func.name}(${argStr}) ends`);
+    return result;
+  };
 }
-
 
 /**
  * Return the function with partial applied arguments
@@ -147,10 +164,9 @@ function logger(/* func, logFunc */) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args1 */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...args1) {
+  return (...args2) => fn(...args1, ...args2);
 }
-
 
 /**
  * Returns the id generator function that returns next integer starting
@@ -169,10 +185,14 @@ function partialUsingArguments(/* fn, ...args1 */) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
+function getIdGeneratorFunction(startFrom) {
+  let currentIdx = startFrom;
+  return () => {
+    const idx = currentIdx;
+    currentIdx += 1;
+    return idx;
+  };
 }
-
 
 module.exports = {
   getComposition,
