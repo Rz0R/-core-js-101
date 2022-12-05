@@ -110,35 +110,131 @@ function fromJSON(proto, json) {
  *    => 'div#main.container.draggable + table#data ~ tr:nth-of-type(even)   td:nth-of-type(even)'
  *
  *  For more examples see unit tests.
+ *  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+ *  ⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⡿⠿⠛⠛⠛⠛⠛⠛⠻⠿⣶⣦⣄⠀⠀⠀⠀⠀⠀
+ *  ⠀⠀⠀⠀⠀⣠⣾⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣷⣦⠀⠀⠀⠀
+ * ⠀⠀⠀⢀⣾⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣷⡄⠀⠀
+ * ⠀⠀⢀⣾⠏⠀⠀⠀⢠⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⡄⠀
+ * ⠀⠀⢸⡿⠀⠀⠀⣰⣿⠛⢿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣷⠀
+ * ⠀⠀⣿⡇⠀⠀⣸⡿⠁⠀⠈⠙⠿⠿⣶⣶⣶⣶⣦⣤⣄⣀⠀⠀⠀⠀⢸⣿⠀
+ * ⠀⠀⣿⣧⣤⣰⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠙⠻⣷⣄⠀⠀⢸⣿⠀
+ * ⠀⠀⢸⣿⠙⢿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠀⠀⠀⠈⣿⡆⠀⣼⡟⠀
+ * ⠀⠀⠈⣿⡀⠘⣿⡆⠀⠀⢀⣀⣤⣶⣶⠿⠿⠛⠛⣿⡆⠀⠀⢸⣿⣾⠿⣷⡄
+ * ⠀⠀⠀⣿⡇⠀⣿⣧⣴⡾⠟⠛⠉⣁⣠⣤⣶⣶⠿⠿⠿⣷⡆⠸⣿⠁⠀⣿⡇
+ * ⠀⠀⠀⣿⡇⠀⠘⠛⠁⠀⠀⠀⠿⠟⠛⠉⢀⣀⣤⣤⣶⣿⡃⠀⠀⠀⣼⡿⠀
+ * ⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣤⣶⡿⠿⠛⠉⠁⣀⣿⡇⠀⢰⣿⠟⠁⠀
+ * ⠀⠀⢠⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⢀⣠⣴⣾⠿⠿⣿⡄⠀⣾⡏⠀⠀⠀
+ * ⠀⠀⣼⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⠋⢁⣠⣴⣾⠟⠁⣼⡟⠀⠀⠀⠀
+ * ⠀⣸⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣾⠿⠛⠉⠀⢠⣾⠟⠀⠀⠀⠀⠀
+ * ⣰⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⡿⠋⠀⠀⣀⣠⣾⠟⠋⠀⠀⠀⠀⠀⠀
+ * ⠛⠃⠀⠀⠀⠀⠀⠀⠀⢀⣠⣶⣿⣿⣶⣶⡾⠿⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀
+ * ⠀⠀⠀⠀⠀⠀⠀⠀⠻⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
  */
 
+class MySuperSelector {
+  constructor() {
+    this.selectors = [];
+    this.combinedSelectors = [];
+    this.error = {
+      onlyOneErr:
+        'Element, id and pseudo-element should not occur more then one time inside the selector',
+      arrangeErr:
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element',
+    };
+  }
+
+  element(value) {
+    if (this.selectors[0]) throw Error(this.error.onlyOneErr);
+    if (this.selectors[1]) throw Error(this.error.arrangeErr);
+
+    this.selectors[0] = value;
+    return this;
+  }
+
+  id(value) {
+    if (this.selectors[1]) throw Error(this.error.onlyOneErr);
+    if (this.selectors[2] || this.selectors[5]) throw Error(this.error.arrangeErr);
+
+    this.selectors[1] = `#${value}`;
+    return this;
+  }
+
+  class(value) {
+    if (this.selectors[3]) throw Error(this.error.arrangeErr);
+
+    if (this.selectors[2]) {
+      this.selectors[2] += `.${value}`;
+    } else {
+      this.selectors[2] = `.${value}`;
+    }
+    return this;
+  }
+
+  attr(value) {
+    if (this.selectors[4]) throw Error(this.error.arrangeErr);
+
+    this.selectors[3] = `[${value}]`;
+    return this;
+  }
+
+  pseudoClass(value) {
+    if (this.selectors[5]) throw Error(this.error.arrangeErr);
+
+    if (this.selectors[4]) {
+      this.selectors[4] += `:${value}`;
+    } else {
+      this.selectors[4] = `:${value}`;
+    }
+    return this;
+  }
+
+  pseudoElement(value) {
+    if (this.selectors[5]) {
+      throw Error(this.error.onlyOneErr);
+    }
+
+    this.selectors[5] = `::${value}`;
+    return this;
+  }
+
+  combine(selector1, combinator, selector2) {
+    this.combinedSelectors = [selector1, combinator, selector2];
+    return this;
+  }
+
+  stringify() {
+    if (this.combinedSelectors.length > 0) return this.combinedSelectors.join(' ');
+    return this.selectors.join('');
+  }
+}
+
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    return new MySuperSelector().element(value);
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return new MySuperSelector().id(value);
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return new MySuperSelector().class(value);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return new MySuperSelector().attr(value);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return new MySuperSelector().pseudoClass(value);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    return new MySuperSelector().pseudoElement(value);
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    return new MySuperSelector().combine(selector1.stringify(), combinator, selector2.stringify());
   },
 };
 
